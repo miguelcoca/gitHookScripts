@@ -1,0 +1,31 @@
+#!/bin/sh
+
+unameOut="$(uname -s)"
+
+case "${unameOut}" in
+    Linux*)                 machine=Linux;;
+    Darwin*)                machine=Mac;;
+    CYGWIN*|MINGW*|MSYS*)   machine=Windows;;
+                       *)   machine="UNKNOWN:${unameOut}"
+esac
+echo "Found: " ${machine} "Machine"
+
+rootDir=$(git rev-parse --show-toplevel)
+
+if [ $machine == "Windows" ]; 
+then
+    pmd.bat -d $rootDir -f text -R category/java/bestpractices.xml,category/java/codestyle.xml
+else
+    pmd="run.sh pmd"
+    $pmd -d $rootDir -f text -R rulesets/java/quickstart.xml
+fi
+
+pmdStatus=$?
+
+if [ $pmdStatus -ne 0 ]; then
+    echo "ERROR> TX Best Practices Offended in the current Commit, FIX code and retry"
+    
+    # Redirect stdout to stderr
+    exec 1>&2
+    exit 1
+fi
