@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!--  comment line -->
 
 <ruleset name="TX Custom Rules"
     xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
@@ -12,7 +13,7 @@
     <rule ref="category/java/errorprone.xml/EmptyCatchBlock" />
     <rule ref="category/java/codestyle.xml/WhileLoopsMustUseBraces" />
     <rule ref="category/java/codestyle.xml/VariableNamingConventions" />
-    <rule ref="category/java/codestyle.xml/UseUnderscoresInNumericLiterals" />
+    <!-- <rule ref="category/java/codestyle.xml/UseUnderscoresInNumericLiterals" /> -->
     <rule ref="category/java/codestyle.xml/AtLeastOneConstructor"/>
     <rule ref="category/java/codestyle.xml/AvoidDollarSigns"/>
     <rule ref="category/java/codestyle.xml/AvoidFinalLocalVariable"/>

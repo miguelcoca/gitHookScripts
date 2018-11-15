@@ -6,12 +6,14 @@
 #
 #   ./pmdinstall -b "pmd-bin-6.9.0" -e ".zip" -u "https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.9.0/"
 #   ./pmdinstall -r "/Users/mike/Workspace/FluentPageObjects"
+#
 
 binName="pmd-bin-6.9.0"
 dwnUrl="https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.9.0/"
 defDwnExt=".zip"
 gitHooks=".git/hooks"
 preCommitScript="pre-commit"
+txRulesFile="TXCustomRules.xml"
 pmdInstallHome=$(pwd)
 
 unameOut="$(uname -s)"
@@ -95,6 +97,7 @@ then
     then
         echo "INFO: $repoPath Directory looks Valid GIT repository"
         echo "INFO: Attempt to Enable pre-commit hook in $repoPath repository"
+      
         if [ -f $preCommitScript ];
         then
             
@@ -125,6 +128,19 @@ then
             echo "ERROR: you'll need to add it manually"
             exit 1
         fi
+
+        if [ -f $txRulesFile ];
+        then  
+            echo "INFO: Found Rules File attept to Copy to Hooks Directory."
+            
+            cp "$txRulesFile" "$repoPath/$gitHooks"
+
+            if [ $? -ne 0 ];
+            then
+                echo "ERROR: Failed to copy Rules file: $txRulesFile to destination: $repoPath/$gitHooks"
+            fi
+        fi    
+
     else
         echo "ERROR: $repoPath Directory does not look like a valid GIT repository"
         echo "ERROR: you'll need to add $preCommitScript script manually"

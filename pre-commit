@@ -1,5 +1,8 @@
 #!/bin/sh
+#set TXIncremental=true to use a file list instead of looking the hole repository
 
+
+TXIncrmental="true"
 unameOut="$(uname -s)"
 
 case "${unameOut}" in
@@ -12,20 +15,56 @@ echo "Found: " ${machine} "Machine"
 
 rootDir=$(git rev-parse --show-toplevel)
 
+pmdRules="$rootDir/.git/hooks/TXCustomRules.xml"
+
+if [ ! -z $TXIncrmental ];
+then
+    # Get staged only files, and create temporary file with the complete list
+    git diff --name-only --cached > GitStagedFiles
+
+    if [ -f ./GitStagedFiles ];
+    then
+        filesGitStaged="true"
+    else
+        echo "ERROR: could not create staged files list."
+    fi
+fi
+
 if [ $machine == "Windows" ]; 
 then
-    pmd.bat -d $rootDir -f text -R category/java/bestpractices.xml,category/java/codestyle.xml
+    if [ -z $filesGitStaged ];
+    then
+        pmd.bat -d $rootDir -f text -R "$pmdRules"
+    else
+        pmd.bat -fileslist ./GitStagedFiles -f text -R "$pmdRules"
+    fi
 else
     pmd="run.sh pmd"
-    $pmd -d $rootDir -f text -R rulesets/java/quickstart.xml
+    if [ -z $filesGitStaged ];
+    then
+        $pmd -d $rootDir -f text -R "$pmdRules"
+    else
+        $pmd -filelist ./GitStagedFiles -f text -R "$pmdRules"
+    fi
 fi
 
 pmdStatus=$?
 
+if [ -f ./GitStagedFiles ];
+then
+    rm -f GitStagedFiles
+
+    if [ $? -ne 0 ];
+    then
+        echo "WARNING: Could not delete ./GitStagedFiles temporary file, you should consider removing it manually"
+    fi
+fi
+
 if [ $pmdStatus -ne 0 ]; then
     echo "ERROR> TX Best Practices Offended in the current Commit, FIX code and retry"
     
-    # Redirect stdout to stderr
+    # Redirect stdout to stderr 
+    # in order to force complete the commit operation return a 0 status
     exec 1>&2
     exit 1
 fi
