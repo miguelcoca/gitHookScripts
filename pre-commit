@@ -11,20 +11,24 @@ case "${unameOut}" in
     CYGWIN*|MINGW*|MSYS*)   machine=Windows;;
                        *)   machine="UNKNOWN:${unameOut}"
 esac
-echo "Found: " ${machine} "Machine"
+echo "INFO: Found: " ${machine} "Machine"
 
 rootDir=$(git rev-parse --show-toplevel)
+echo "INFO: current Working Directory $rootDir"
 
 pmdRules="$rootDir/.git/hooks/TXCustomRules.xml"
+echo "INFO: Found Rules File $pmdRules"
 
 if [ ! -z $TXIncrmental ];
 then
     # Get staged only files, and create temporary file with the complete list
     git diff --name-only --cached > GitStagedFiles
-
+    
     if [ -f ./GitStagedFiles ];
     then
         filesGitStaged="true"
+        echo "INFO: files in stage to process"
+        cat ./GitStagedFiles
     else
         echo "ERROR: could not create staged files list."
     fi
@@ -52,6 +56,7 @@ pmdStatus=$?
 
 if [ -f ./GitStagedFiles ];
 then
+    echo "INFO: removing temporary files..."
     rm -f GitStagedFiles
 
     if [ $? -ne 0 ];
@@ -61,7 +66,7 @@ then
 fi
 
 if [ $pmdStatus -ne 0 ]; then
-    echo "ERROR> TX Best Practices Offended in the current Commit, FIX code and retry"
+    echo "ERROR: TX Best Practices Offended in the current Commit, FIX code and retry"
     
     # Redirect stdout to stderr 
     # in order to force complete the commit operation return a 0 status
