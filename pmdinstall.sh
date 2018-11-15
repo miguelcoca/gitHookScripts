@@ -131,8 +131,8 @@ then
 
         if [ -f $txRulesFile ];
         then  
-            echo "INFO: Found Rules File attept to Copy to Hooks Directory."
-            
+            echo "INFO: Found Rules File attempt to Copy to Hooks Directory."
+
             cp "$txRulesFile" "$repoPath/$gitHooks"
 
             if [ $? -ne 0 ];
