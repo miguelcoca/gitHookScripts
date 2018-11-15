@@ -36,7 +36,7 @@ then
     then
         pmd.bat -d $rootDir -f text -R "$pmdRules"
     else
-        pmd.bat -fileslist ./GitStagedFiles -f text -R "$pmdRules"
+        pmd.bat -filelist ./GitStagedFiles -f text -R "$pmdRules"
     fi
 else
     pmd="run.sh pmd"
