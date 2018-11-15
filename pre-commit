@@ -34,6 +34,9 @@ then
     fi
 fi
 
+echo "***********************"
+echo "INFO: Start analysis..."
+
 if [ $machine == "Windows" ]; 
 then
     if [ -z $filesGitStaged ];
@@ -51,6 +54,8 @@ else
         $pmd -filelist ./GitStagedFiles -f text -R "$pmdRules"
     fi
 fi
+
+echo "**********  END  *************"
 
 pmdStatus=$?
 
