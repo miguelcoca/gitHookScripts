@@ -22,7 +22,7 @@ echo "INFO: Found Rules File $pmdRules"
 if [ ! -z $TXIncrmental ];
 then
     # Get staged only files, and create temporary file with the complete list
-    git diff --name-only --cached > GitStagedFiles
+    git diff --name-only --cached | grep -i '.java' > GitStagedFiles
     
     if [ -f ./GitStagedFiles ];
     then
@@ -76,5 +76,5 @@ if [ $pmdStatus -ne 0 ]; then
     # Redirect stdout to stderr 
     # in order to force complete the commit operation return a 0 status
     exec 1>&2
-    exit 1
+    exit 0
 fi
